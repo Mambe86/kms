@@ -36,109 +36,123 @@ th, tr {
 <script type="text/javascript">
   var symbolX = "✕";
   var symbolO = "○";
-  let  a=1,
-  b=2,
-  c=3;
-  let field = [ [,,],
-    [,,],
-    [,,]
-   ];
-
+  
+  let field = [	[,,],
+				[,,],
+				[,,]
+			];
+  
   var nextSymbolIsX = true;
+  
+  function checkGame() {
+	//проверка победителя по горизонтали	
+	for (let i = 0; i < 3; i++) {
+			if (((field[i][0]===symbolX)&&
+				(field[i][1]===symbolX)&&
+				(field[i][2]===symbolX))) return 1;
+			
+			if (((field[i][0]===symbolO)&&
+				(field[i][1]===symbolO)&&
+				(field[i][2]===symbolO))) return 2;
+	}
+	//проверка победителя по вертикали		
+	for (let j = 0; j < 3; j++) {
+		if (((field[0][j]===symbolX)&&
+			(field[1][j]===symbolX)&&
+			(field[2][j]===symbolX))) return 1;
+		 
+		if (((field[0][j]===symbolO)&&
+			(field[1][j]===symbolO)&&
+			(field[2][j]===symbolO))) return 2;
+		 
+	}
+	//проверка победителя по диагоналям	
+	if (((field[0][0]===symbolX)&&
+		 (field[1][1]===symbolX)&&
+		 (field[2][2]===symbolX))||
+		((field[0][2]===symbolX)&&
+		 (field[1][1]===symbolX)&&
+		 (field[2][0]===symbolX))) return 1;
+		
+	if (((field[0][0]===symbolO)&&
+		 (field[1][1]===symbolO)&&
+		 (field[2][2]===symbolO))||
+		((field[0][2]===symbolO)&&
+		 (field[1][1]===symbolO)&&
+		 (field[2][0]===symbolO))) return 2;
+	
+	
+	for (let i = 0; i < 3; i++) {
+		for (let j = 0; j < 3; j++) {
+			if (field[i][j] == undefined) return 0;
+		}
+	}
+	
+	return 3;
+  }
 
-  function modifyText(event) { // первый аргумент это информация о "событии"
+  function clearField() {
+	for (let i = 0; i < 3; i++) {
+		for (let j = 0; j < 3; j++) {
+//что я тут только не пробывал
+			field[i][j] = "";
+		}
+	}
+  }
 
-    // получает элемент на который кликнули
+  function showSymbol() {
+	// получает элемент на который кликнули
     var clickedElement = event.target;
-
+  
     // получает id элемента на который кликнули
     // затем берет второй символ от id, "t2" => "2"
     // затем parseInt чтобы получить из сроки "2" интеджер 2
     var indexOfElementHor = parseInt(clickedElement.id.substring(1,2), 10);
- var indexOfElementVer = parseInt(clickedElement.id.substring(2,3), 10);
-//    alert(`${indexOfElementHor}-${indexOfElementVer}`);
-// alert(field[indexOfElementHor][indexOfElementVer]);
-
-
-//проверка ячейки, свободна ли она 
- if (field[indexOfElementHor][indexOfElementVer]===undefined) {
-  if (nextSymbolIsX) {
-   field[indexOfElementHor][indexOfElementVer] = symbolX;
-   clickedElement.firstChild.nodeValue = symbolX;
-   nextSymbolIsX = !nextSymbolIsX;
-  }  else {
-   field[indexOfElementHor][indexOfElementVer] = symbolO;
-   clickedElement.firstChild.nodeValue = symbolO;
-   nextSymbolIsX = !nextSymbolIsX;
+	var indexOfElementVer = parseInt(clickedElement.id.substring(2,3), 10);
+	//проверка ячейки, свободна ли она	
+	if (field[indexOfElementHor][indexOfElementVer]===undefined) {
+		if (nextSymbolIsX) {
+			field[indexOfElementHor][indexOfElementVer] = symbolX;
+			clickedElement.firstChild.nodeValue = symbolX;
+			nextSymbolIsX = !nextSymbolIsX;
+		}	 else {
+			field[indexOfElementHor][indexOfElementVer] = symbolO;
+			clickedElement.firstChild.nodeValue = symbolO;
+			nextSymbolIsX = !nextSymbolIsX;
+		}
+	}
+	// выводит в консоль элемент и индекс
+	console.log(clickedElement, indexOfElementHor,indexOfElementVer);
+	// вывести в консоль состояние поля
+    console.log(field);	
+	
+	
   }
-  // выводит в консоль элемент и индекс
-  console.log(clickedElement, indexOfElementHor,indexOfElementVer);
-  
-  
- /* field[indexOfElementHor][indexOfElementVer] = symbolX;
-  clickedElement.firstChild.nodeValue = symbolX;
-*/ };
-    
-    
 
-/*    if (nextSymbolIsX) {
-      field[indexOfElement] = symbolX;
-      clickedElement.firstChild.nodeValue = symbolX;
-    } else {
-      field[indexOfElement] = symbolO;
-      clickedElement.firstChild.nodeValue = symbolO;
-    }
-*/
-     // поменять следущий символ
-
-    // вывести в консоль состояние поля
-    console.log(field);
+  function modifyText() { 
     // тут надо бы проверить выйграл ли кто-то или игра еще продолжается
- 
-//проверка победителя по горизонтали 
- for (let i = 0; i < 3; i++) {
-   if ((field[i][0]===symbolX)&&
-    (field[i][1]===symbolX)&&
-    (field[i][2]===symbolX)) {
-   alert(`win X`);
-   } 
-   if ((field[i][0]===symbolO)&&
-    (field[i][1]===symbolO)&&
-    (field[i][2]===symbolO)) {
-   alert(`win O`);
-   } 
-  }
-//проверка победителя по вертикали  
- for (let j = 0; j < 3; j++) {
-  if ((field[0][j]===symbolX)&&
-   (field[1][j]===symbolX)&&
-   (field[2][j]===symbolX)) {
-  alert(`win X`);
-  } 
-  if ((field[0][j]===symbolO)&&
-   (field[1][j]===symbolO)&&
-   (field[2][j]===symbolO)) {
-  alert(`win O`);
-  } 
- }
-//проверка победителя по диагоналям 
- if (((field[0][0]===symbolX)&&
-   (field[1][1]===symbolX)&&
-   (field[2][2]===symbolX))||
-  ((field[0][2]===symbolX)&&
-   (field[1][1]===symbolX)&&
-   (field[2][0]===symbolX))) alert(`win X`);
-  
- if (((field[0][0]===symbolO)&&
-   (field[1][1]===symbolO)&&
-   (field[2][2]===symbolO))||
-  ((field[0][2]===symbolO)&&
-   (field[1][1]===symbolO)&&
-   (field[2][0]===symbolO))) alert(`win O`);
-  }
 
-  var el = document.getElementById("field");
-  el.addEventListener("click", modifyText, false);
+
+	switch(checkGame()) {
+		case 1: 
+			if (confirm("Победа за Х, еще?")) clearField;
+			break;
+		case 2: 
+			if (confirm("Победа за О, еще?")) clearField; 
+			break;
+		case 3: 
+			if (confirm("Ничья, еще?")) clearField; 
+			break;
+	}
+}
+
+  
+
+var el = document.getElementById("field");
+	el.addEventListener("click", showSymbol, false);
+	
+	el.addEventListener("click", checkGame, false);
+	el.addEventListener("click", modifyText, false);  
   
  
   
