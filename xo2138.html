@@ -32,6 +32,7 @@ th, tr {
   </tr>
  </table>
 
+<h1 id="step">Ход X </h1>
 
 <script type="text/javascript">
   var symbolX = "✕";
@@ -94,8 +95,13 @@ th, tr {
   function clearField() {
 	for (let i = 0; i < 3; i++) {
 		for (let j = 0; j < 3; j++) {
-//что я тут только не пробывал
-			field[i][j] = "";
+			field[i][j]=undefined;
+			var id = "t" + i + j;
+//			alert(id);
+			var cell = document.getElementById(id);
+			cell.firstChild.nodeValue = "";
+			console.log(cell);
+			
 		}
 	}
   }
@@ -129,30 +135,40 @@ th, tr {
 	
   }
 
-  function modifyText() { 
-    // тут надо бы проверить выйграл ли кто-то или игра еще продолжается
+  function stepText() {
+	if (nextSymbolIsX) step.firstChild.nodeValue = "Ход X";
+		else step.firstChild.nodeValue = "Ход O";
+  }
 
-
-	switch(checkGame()) {
+  function proccesClick() { 
+		showSymbol();
+		checkGame();
+		stepText();
+	
+		switch(checkGame()) {
 		case 1: 
-			if (confirm("Победа за Х, еще?")) clearField;
+			step.firstChild.nodeValue = "Победа за Х";
+			if (confirm("Победа за Х, еще?")) clearField();
 			break;
 		case 2: 
-			if (confirm("Победа за О, еще?")) clearField; 
+			step.firstChild.nodeValue = "Победа за O";
+		//	if (confirm("Победа за О, еще?")) clearField(); 
 			break;
 		case 3: 
-			if (confirm("Ничья, еще?")) clearField; 
+			step.firstChild.nodeValue = "Ничья";
+		//	if (confirm("Ничья, еще?")) clearField(); 
 			break;
+		}
+	
 	}
+	
+    	
 }
 
   
 
 var el = document.getElementById("field");
-	el.addEventListener("click", showSymbol, false);
-	
-	el.addEventListener("click", checkGame, false);
-	el.addEventListener("click", modifyText, false);  
+	el.addEventListener("click", proccesClick, false);  
   
  
   
