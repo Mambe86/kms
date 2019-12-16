@@ -32,142 +32,183 @@ th, tr {
   </tr>
  </table>
 
-<h1 id="step">Ход X </h1>
+ <h2 id="step">Ход X </h2>
+ <h1><pre id="winner"> </pre> </h1>
+<h2> <pre>  X = <b id="cntX"> 0 </b> </pre></h2>
+<h2> <pre>  O = <b id="cntO"> 0 </b></pre></h2>
 
 <script type="text/javascript">
   var symbolX = "✕";
   var symbolO = "○";
-  
+
+  let countX = 0,
+      countO = 0;
+
   let field = [	[,,],
 				[,,],
 				[,,]
 			];
   
   var nextSymbolIsX = true;
+  let endGame = false;
   
-  function checkGame() {
-	//проверка победителя по горизонтали	
-	for (let i = 0; i < 3; i++) {
+	function checkGame() {	//проверка
+		//проверка победителя по горизонтали	
+		for (let i = 0; i < 3; i++) {
 			if (((field[i][0]===symbolX)&&
 				(field[i][1]===symbolX)&&
-				(field[i][2]===symbolX))) return 1;
+				(field[i][2]===symbolX))) {
+					endGame = true;
+					return 1;
+			}
 			
 			if (((field[i][0]===symbolO)&&
 				(field[i][1]===symbolO)&&
-				(field[i][2]===symbolO))) return 2;
-	}
-	//проверка победителя по вертикали		
-	for (let j = 0; j < 3; j++) {
-		if (((field[0][j]===symbolX)&&
-			(field[1][j]===symbolX)&&
-			(field[2][j]===symbolX))) return 1;
+				(field[i][2]===symbolO))) {
+					endGame = true;
+					return 2;
+			}
+		}
+		//проверка победителя по вертикали		
+		for (let j = 0; j < 3; j++) {
+			if (((field[0][j]===symbolX)&&
+				(field[1][j]===symbolX)&&
+				(field[2][j]===symbolX))) {
+					endGame = true;
+					return 1;
+			}
 		 
-		if (((field[0][j]===symbolO)&&
-			(field[1][j]===symbolO)&&
-			(field[2][j]===symbolO))) return 2;
-		 
-	}
-	//проверка победителя по диагоналям	
-	if (((field[0][0]===symbolX)&&
-		 (field[1][1]===symbolX)&&
-		 (field[2][2]===symbolX))||
-		((field[0][2]===symbolX)&&
-		 (field[1][1]===symbolX)&&
-		 (field[2][0]===symbolX))) return 1;
+			if (((field[0][j]===symbolO)&&
+				(field[1][j]===symbolO)&&
+				(field[2][j]===symbolO))) {
+					endGame = true;
+					return 2;
+			}
+		}
+		//проверка победителя по диагоналям	
+		if (((field[0][0]===symbolX)&&
+		 	(field[1][1]===symbolX)&&
+			 (field[2][2]===symbolX))||
+			((field[0][2]===symbolX)&&
+		 	(field[1][1]===symbolX)&&
+		 	(field[2][0]===symbolX))) {
+					endGame = true;
+					return 1;
+		}
 		
-	if (((field[0][0]===symbolO)&&
-		 (field[1][1]===symbolO)&&
-		 (field[2][2]===symbolO))||
-		((field[0][2]===symbolO)&&
-		 (field[1][1]===symbolO)&&
-		 (field[2][0]===symbolO))) return 2;
-	
-	
-	for (let i = 0; i < 3; i++) {
-		for (let j = 0; j < 3; j++) {
-			if (field[i][j] == undefined) return 0;
+		if (((field[0][0]===symbolO)&&
+		 	(field[1][1]===symbolO)&&
+		 	(field[2][2]===symbolO))||
+			((field[0][2]===symbolO)&&
+		 	(field[1][1]===symbolO)&&
+		 	(field[2][0]===symbolO))) {
+					endGame = true;
+					return 2;
 		}
-	}
 	
-	return 3;
-  }
-
-  function clearField() {
-	for (let i = 0; i < 3; i++) {
-		for (let j = 0; j < 3; j++) {
-			field[i][j]=undefined;
-			var id = "t" + i + j;
-//			alert(id);
-			var cell = document.getElementById(id);
-			cell.firstChild.nodeValue = "";
-			console.log(cell);
-			
+		//Проверка ничьи
+		for (let i = 0; i < 3; i++) {
+			for (let j = 0; j < 3; j++) {
+				if (field[i][j] == undefined) return 0;
+			}
 		}
-	}
-  }
+		endGame = true;
+		return 3;
+ 	}
 
-  function showSymbol() {
-	// получает элемент на который кликнули
-    var clickedElement = event.target;
-  
-    // получает id элемента на который кликнули
-    // затем берет второй символ от id, "t2" => "2"
-    // затем parseInt чтобы получить из сроки "2" интеджер 2
-    var indexOfElementHor = parseInt(clickedElement.id.substring(1,2), 10);
-	var indexOfElementVer = parseInt(clickedElement.id.substring(2,3), 10);
-	//проверка ячейки, свободна ли она	
-	if (field[indexOfElementHor][indexOfElementVer]===undefined) {
-		if (nextSymbolIsX) {
-			field[indexOfElementHor][indexOfElementVer] = symbolX;
-			clickedElement.firstChild.nodeValue = symbolX;
-			nextSymbolIsX = !nextSymbolIsX;
-		}	 else {
-			field[indexOfElementHor][indexOfElementVer] = symbolO;
-			clickedElement.firstChild.nodeValue = symbolO;
-			nextSymbolIsX = !nextSymbolIsX;
+  	function clearField() {
+		for (let i = 0; i < 3; i++) {
+			for (let j = 0; j < 3; j++) {
+				field[i][j]=undefined;
+				var id = "t" + i + j;
+				var cell = document.getElementById(id);
+				cell.firstChild.nodeValue = "";
+				console.log(cell);
+			}	
 		}
-	}
-	// выводит в консоль элемент и индекс
-	console.log(clickedElement, indexOfElementHor,indexOfElementVer);
-	// вывести в консоль состояние поля
-    console.log(field);	
-	
-	
-  }
+		endGame = false;
+		winner.firstChild.nodeValue = " ";
+ 	}
 
-  function stepText() {
-	if (nextSymbolIsX) step.firstChild.nodeValue = "Ход X";
+ 	function showSymbol() {
+		// получает элемент на который кликнули
+    	var clickedElement = event.target;
+		
+    	// получает id элемента на который кликнули
+    	// затем берет второй символ от id, "t2" => "2"
+  	  	// затем parseInt чтобы получить из сроки "2" интеджер 2
+  	 	var indexOfElementHor = parseInt(clickedElement.id.substring(1,2), 10);
+		var indexOfElementVer = parseInt(clickedElement.id.substring(2,3), 10);
+		//проверка ячейки, свободна ли она	
+		if (field[indexOfElementHor][indexOfElementVer]===undefined) {
+			if (nextSymbolIsX) {
+				field[indexOfElementHor][indexOfElementVer] = symbolX;
+				clickedElement.firstChild.nodeValue = symbolX;
+				nextSymbolIsX = !nextSymbolIsX;
+			}	else {
+				field[indexOfElementHor][indexOfElementVer] = symbolO;
+				clickedElement.firstChild.nodeValue = symbolO;
+				nextSymbolIsX = !nextSymbolIsX;
+			}
+		}
+		// выводит в консоль элемент и индекс
+		console.log(clickedElement, indexOfElementHor,indexOfElementVer);
+		// вывести в консоль состояние поля
+  	  	console.log(field);	
+	}
+
+  	function stepText() {
+		if (nextSymbolIsX) step.firstChild.nodeValue = "Ход X";
 		else step.firstChild.nodeValue = "Ход O";
-  }
+  	}
 
-  function proccesClick() { 
-		showSymbol();
-		checkGame();
-		stepText();
-	
+	function winnerText() {
 		switch(checkGame()) {
-		case 1: 
-			step.firstChild.nodeValue = "Победа за Х";
-			if (confirm("Победа за Х, еще?")) clearField();
-			break;
-		case 2: 
-			step.firstChild.nodeValue = "Победа за O";
-		//	if (confirm("Победа за О, еще?")) clearField(); 
-			break;
-		case 3: 
-			step.firstChild.nodeValue = "Ничья";
-		//	if (confirm("Ничья, еще?")) clearField(); 
-			break;
+			case 1: 
+				winner.firstChild.nodeValue = "Победа за Х";
+				step.firstChild.nodeValue = "Клик для новой игры";
+				countX++;
+				break;
+			case 2: 
+				winner.firstChild.nodeValue = "Победа за O";
+				step.firstChild.nodeValue = "Клик для новой игры";
+				countO++;
+				break;
+			case 3: 
+				winner.firstChild.nodeValue = "Ничья";
+				step.firstChild.nodeValue = "Клик для новой игры";
+				break;
+		}
+
+	}  
+  	
+	function countText() {
+		cntX.firstChild.nodeValue = countX;
+		cntO.firstChild.nodeValue = countO;
+	}  
+
+	function proccesClick() { 
+		if (!endGame) {
+			showSymbol();
+			stepText();
+			checkGame();
+			winnerText();
+			countText();
+		} else {
+			countText();
+			stepText();
+			clearField();
+
 		}
 	
+		
 	}
-	
-    	
-}
+	    	
+
 
   
 
-var el = document.getElementById("field");
+	var el = document.getElementById("field");
 	el.addEventListener("click", proccesClick, false);  
   
  
