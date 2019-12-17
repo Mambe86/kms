@@ -47,7 +47,7 @@ th, tr {
   let field = [	[,,],
 				[,,],
 				[,,]
-			];
+			   ];
   
   var nextSymbolIsX = true;
   let endGame = false;
@@ -72,27 +72,27 @@ th, tr {
 		//проверка победителя по вертикали		
 		for (let j = 0; j < 3; j++) {
 			if (((field[0][j]===symbolX)&&
-				(field[1][j]===symbolX)&&
-				(field[2][j]===symbolX))) {
-					endGame = true;
-					return 1;
+				 (field[1][j]===symbolX)&&
+				 (field[2][j]===symbolX))) {
+				endGame = true;
+				return 1;
 			}
 		 
 			if (((field[0][j]===symbolO)&&
-				(field[1][j]===symbolO)&&
-				(field[2][j]===symbolO))) {
-					endGame = true;
-					return 2;
+				 (field[1][j]===symbolO)&&
+				 (field[2][j]===symbolO))) {
+				endGame = true;
+				return 2;
 			}
 		}
 		//проверка победителя по диагоналям	
 		if (((field[0][0]===symbolX)&&
-		 	(field[1][1]===symbolX)&&
+		 	 (field[1][1]===symbolX)&&
 			 (field[2][2]===symbolX))||
 			((field[0][2]===symbolX)&&
-		 	(field[1][1]===symbolX)&&
-		 	(field[2][0]===symbolX))) {
-					endGame = true;
+		 	 (field[1][1]===symbolX)&&
+		 	 (field[2][0]===symbolX))) {
+			endGame = true;
 					return 1;
 		}
 		
@@ -157,9 +157,12 @@ th, tr {
   	  	console.log(field);	
 	}
 
-  	function stepText() {
-		if (nextSymbolIsX) step.firstChild.nodeValue = "Ход X";
-		else step.firstChild.nodeValue = "Ход O";
+  	function stepText() { // чей ход?
+		if (nextSymbolIsX) {
+			step.firstChild.nodeValue = "Ход X";
+		} else {
+			step.firstChild.nodeValue = "Ход O";
+		}	
   	}
 
 	function winnerText() {
