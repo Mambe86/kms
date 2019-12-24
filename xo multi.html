@@ -120,8 +120,8 @@ th, tr {
 		for (let i = 0; i < 3; i++) {
 			for (let j = 0; j < 3; j++) {
 				if (field[i][j] == undefined) {
-					return 
 					game.playerWin = 0;
+					return;
 				}
 			}
 		}
@@ -131,7 +131,6 @@ th, tr {
  	}
 
   	function clearField(field) {
-		field = field;
 		for (let i = 0; i < 3; i++) {
 			for (let j = 0; j < 3; j++) {
 				field[i][j]=undefined;
