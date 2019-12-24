@@ -44,9 +44,9 @@ th, tr {
   let game = {
     gameId: "t",
     field: [
-        [, ,],
-        [, ,],
-        [, ,]
+        [ , , ],
+        [ , , ],
+        [ , , ]
     ],
     countX: 0,
     countO: 0,
@@ -54,23 +54,25 @@ th, tr {
     endGame: false
   };
   console.log(game.field);
-  
+
 	function checkGame(field) {	//проверка
 		//проверка победителя по горизонтали	
-		console.log('филд'+field);
+		console.log(field);
 		for (let i = 0; i < 3; i++) {
 			if (((field[i][0]===symbolX)&&
 				(field[i][1]===symbolX)&&
 				(field[i][2]===symbolX))) {
 					game.endGame = true;
-					return 1;
+					game.playerWin = 1;
+					return ;
 			}
 			
 			if (((field[i][0]===symbolO)&&
 				(field[i][1]===symbolO)&&
 				(field[i][2]===symbolO))) {
 					game.endGame = true;
-					return 2;
+					game.playerWin = 2;
+					return ;
 			}
 		}
 		//проверка победителя по вертикали		
@@ -79,14 +81,16 @@ th, tr {
 				 (field[1][j]===symbolX)&&
 				 (field[2][j]===symbolX))) {
 					game.endGame = true;
-				return 1;
+					game.playerWin = 1;
+				return ;
 			}
 		 
 			if (((field[0][j]===symbolO)&&
 				 (field[1][j]===symbolO)&&
 				 (field[2][j]===symbolO))) {
 					game.endGame = true;
-				return 2;
+					game.playerWin = 2;
+				return ;
 			}
 		}
 		//проверка победителя по диагоналям	
@@ -97,7 +101,8 @@ th, tr {
 		 	 (field[1][1]===symbolX)&&
 		 	 (field[2][0]===symbolX))) {
 				game.endGame = true;
-					return 1;
+				game.playerWin = 1;
+					return ;
 		}
 		
 		if (((field[0][0]===symbolO)&&
@@ -107,17 +112,22 @@ th, tr {
 		 	(field[1][1]===symbolO)&&
 		 	(field[2][0]===symbolO))) {
 				game.endGame = true;
-					return 2;
+				game.playerWin = 2;
+					return ;
 		}
 	
 		//Проверка ничьи
 		for (let i = 0; i < 3; i++) {
 			for (let j = 0; j < 3; j++) {
-				if (field[i][j] == undefined) return 0;
+				if (field[i][j] == undefined) {
+					return 
+					game.playerWin = 0;
+				}
 			}
 		}
 		game.endGame = true;
-		return 3;
+		game.playerWin = 3;
+		return ;
  	}
 
   	function clearField(field) {
@@ -127,12 +137,12 @@ th, tr {
 				field[i][j]=undefined;
 				var id = "t" + i + j;
 				var cell = document.getElementById(id);
-				cell.firstChild.nodeValue = "";
-				console.log(cell);
+				cell.firstChild.nodeValue = ""
 			}	
 		}
 		game.endGame = false;
 		winner.firstChild.nodeValue = " ";
+		game.playerWin = 0;
  	}
 
  	function showSymbol(field, nextSymbolIsX) {
@@ -172,9 +182,7 @@ th, tr {
   	}
 
 	function winnerText(countX,countO) {
-		game.countX = countX;
-		game.countO = countO;
-		switch(checkGame()) {
+			switch(game.playerWin) {
 			case 1: 
 				winner.firstChild.nodeValue = "Победа за Х";
 				step.firstChild.nodeValue = "Клик для новой игры";
