@@ -53,91 +53,89 @@ th, tr {
     nextSymbolIsX: true,
     endGame: false
   };
+  console.log(game.field);
   
-	function CheckGame(field) {	//проверка
+	function checkGame(field) {	//проверка
 		//проверка победителя по горизонтали	
-		this.field = field;
+		console.log('филд'+field);
 		for (let i = 0; i < 3; i++) {
-			if (((this.field[i][0]===symbolX)&&
-				(this.field[i][1]===symbolX)&&
-				(this.field[i][2]===symbolX))) {
-					this.endGame = true;
+			if (((field[i][0]===symbolX)&&
+				(field[i][1]===symbolX)&&
+				(field[i][2]===symbolX))) {
+					game.endGame = true;
 					return 1;
 			}
 			
-			if (((this.field[i][0]===symbolO)&&
-				(this.field[i][1]===symbolO)&&
-				(this.field[i][2]===symbolO))) {
-					this.endGame = true;
+			if (((field[i][0]===symbolO)&&
+				(field[i][1]===symbolO)&&
+				(field[i][2]===symbolO))) {
+					game.endGame = true;
 					return 2;
 			}
 		}
 		//проверка победителя по вертикали		
 		for (let j = 0; j < 3; j++) {
-			if (((this.field[0][j]===symbolX)&&
-				 (this.field[1][j]===symbolX)&&
-				 (this.field[2][j]===symbolX))) {
-					this.endGame = true;
+			if (((field[0][j]===symbolX)&&
+				 (field[1][j]===symbolX)&&
+				 (field[2][j]===symbolX))) {
+					game.endGame = true;
 				return 1;
 			}
 		 
-			if (((this.field[0][j]===symbolO)&&
-				 (this.field[1][j]===symbolO)&&
-				 (this.field[2][j]===symbolO))) {
-					this.endGame = true;
+			if (((field[0][j]===symbolO)&&
+				 (field[1][j]===symbolO)&&
+				 (field[2][j]===symbolO))) {
+					game.endGame = true;
 				return 2;
 			}
 		}
 		//проверка победителя по диагоналям	
-		if (((this.field[0][0]===symbolX)&&
-		 	 (this.field[1][1]===symbolX)&&
-			 (this.field[2][2]===symbolX))||
-			((this.field[0][2]===symbolX)&&
-		 	 (this.field[1][1]===symbolX)&&
-		 	 (this.field[2][0]===symbolX))) {
-				this.endGame = true;
+		if (((field[0][0]===symbolX)&&
+		 	 (field[1][1]===symbolX)&&
+			 (field[2][2]===symbolX))||
+			((field[0][2]===symbolX)&&
+		 	 (field[1][1]===symbolX)&&
+		 	 (field[2][0]===symbolX))) {
+				game.endGame = true;
 					return 1;
 		}
 		
-		if (((this.field[0][0]===symbolO)&&
-		 	(this.field[1][1]===symbolO)&&
-		 	(this.field[2][2]===symbolO))||
-			((this.field[0][2]===symbolO)&&
-		 	(this.field[1][1]===symbolO)&&
-		 	(this.field[2][0]===symbolO))) {
-				this.endGame = true;
+		if (((field[0][0]===symbolO)&&
+		 	(field[1][1]===symbolO)&&
+		 	(field[2][2]===symbolO))||
+			((field[0][2]===symbolO)&&
+		 	(field[1][1]===symbolO)&&
+		 	(field[2][0]===symbolO))) {
+				game.endGame = true;
 					return 2;
 		}
 	
 		//Проверка ничьи
 		for (let i = 0; i < 3; i++) {
 			for (let j = 0; j < 3; j++) {
-				if (this.field[i][j] == undefined) return 0;
+				if (field[i][j] == undefined) return 0;
 			}
 		}
-		this.endGame = true;
+		game.endGame = true;
 		return 3;
  	}
 
-  	function ClearField(field) {
-		this.field = field;
+  	function clearField(field) {
+		field = field;
 		for (let i = 0; i < 3; i++) {
 			for (let j = 0; j < 3; j++) {
-				this.field[i][j]=undefined;
+				field[i][j]=undefined;
 				var id = "t" + i + j;
 				var cell = document.getElementById(id);
 				cell.firstChild.nodeValue = "";
 				console.log(cell);
 			}	
 		}
-		this.endGame = false;
+		game.endGame = false;
 		winner.firstChild.nodeValue = " ";
  	}
 
- 	function ShowSymbol(field,nextSymbolIsX) {
-		 this.field = field;
-		 this.nextSymbolIsX = nextSymbolIsX;
-
+ 	function showSymbol(field, nextSymbolIsX) {
 		// получает элемент на который кликнули
     	var clickedElement = event.target;
 		
@@ -147,15 +145,15 @@ th, tr {
   	 	var indexOfElementHor = parseInt(clickedElement.id.substring(1,2), 10);
 		var indexOfElementVer = parseInt(clickedElement.id.substring(2,3), 10);
 		//проверка ячейки, свободна ли она	
-		if (this.field[indexOfElementHor][indexOfElementVer]===undefined) {
-			if (this.nextSymbolIsX) {
-				this.field[indexOfElementHor][indexOfElementVer] = symbolX;
+		if (field[indexOfElementHor][indexOfElementVer]===undefined) {
+			if (nextSymbolIsX) {
+				field[indexOfElementHor][indexOfElementVer] = symbolX;
 				clickedElement.firstChild.nodeValue = symbolX;
-				this.nextSymbolIsX = !this.nextSymbolIsX;
+				game.nextSymbolIsX = !game.nextSymbolIsX;  			 //приходиться изменять
 			}	else {
-				this.field[indexOfElementHor][indexOfElementVer] = symbolO;
+				field[indexOfElementHor][indexOfElementVer] = symbolO;
 				clickedElement.firstChild.nodeValue = symbolO;
-				this.nextSymbolIsX = !this.nextSymbolIsX;
+				game.nextSymbolIsX = !game.nextSymbolIsX;			//приходиться изменять
 			}
 		}
 		// выводит в консоль элемент и индекс
@@ -164,28 +162,28 @@ th, tr {
   	  	console.log(field);	
 	}
 
-  	function StepText(nextSymbolIsX) { // чей ход?
-	    this.nextSymbolIsX = nextSymbolIsX;
-		if (this.nextSymbolIsX) {
+  	function stepText(nextSymbolIsX) { // чей ход?
+	    game.nextSymbolIsX = nextSymbolIsX;
+		if (game.nextSymbolIsX) {
 			step.firstChild.nodeValue = "Ход X";
 		} else {
 			step.firstChild.nodeValue = "Ход O";
 		}	
   	}
 
-	function WinnerText(countX,countO) {
-		this.countX = countX;
-		this.countO = countO;
-		switch(CheckGame()) {
+	function winnerText(countX,countO) {
+		game.countX = countX;
+		game.countO = countO;
+		switch(checkGame()) {
 			case 1: 
 				winner.firstChild.nodeValue = "Победа за Х";
 				step.firstChild.nodeValue = "Клик для новой игры";
-				this.countX++;
+				game.countX++;
 				break;
 			case 2: 
 				winner.firstChild.nodeValue = "Победа за O";
 				step.firstChild.nodeValue = "Клик для новой игры";
-				this.countO++;
+				game.countO++;
 				break;
 			case 3: 
 				winner.firstChild.nodeValue = "Ничья";
@@ -195,21 +193,22 @@ th, tr {
 	}  
   	
 	function countText() {
-		cntX.firstChild.nodeValue = this.countX;
-		cntO.firstChild.nodeValue = this.countO;
+		cntX.firstChild.nodeValue = game.countX;
+		cntO.firstChild.nodeValue = game.countO;
 	}  
 
 	function proccesClick() { 
 		if (!game.endGame) {
-			ShowSymbol(game.field, game.nextSymbolIsX);
-			StepText(game.nextSymbolIsX);
-			CheckGame(game.field);
-			WinnerText(game.countX, game.countO);
+			showSymbol(game.field, game.nextSymbolIsX);
+			console.log(game);
+			stepText(game.nextSymbolIsX);
+			checkGame(game.field);
+			winnerText(game.countX, game.countO);
 			countText();
 		} else {
 			countText();
-			StepText(game.nextSymbolIsX);
-			ClearField(game.field);
+			stepText(game.nextSymbolIsX);
+			clearField(game.field);
 
 		}
 	
