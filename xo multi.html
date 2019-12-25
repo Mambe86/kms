@@ -18,7 +18,7 @@
         </style>
     </head>
     <body>
-        <table id="field">
+        <table id="fieldT">
             <tr>
                 <th id="t00"></th>
                 <th id="t01"></th>
@@ -62,112 +62,114 @@
                 nextSymbolIsX: true,
                 endGame: false
             };
-            console.log(game.field);
 
-            function checkGame(field) {
+            function checkGame(currentGame) {
                 //проверка
                 //проверка победителя по горизонтали
+
                 console.log(field);
                 for (let i = 0; i < 3; i++) {
                     if (
-                        field[i][0] === symbolX &&
-                        field[i][1] === symbolX &&
-                        field[i][2] === symbolX
+                        currentGame.field[i][0] === symbolX &&
+                        currentGame.field[i][1] === symbolX &&
+                        currentGame.field[i][2] === symbolX
                     ) {
-                        game.endGame = true;
-                        game.playerWin = 1;
+                        currentGame.endGame = true;
+                        currentGame.playerWin = 1;
                         return;
                     }
 
                     if (
-                        field[i][0] === symbolO &&
-                        field[i][1] === symbolO &&
-                        field[i][2] === symbolO
+                        currentGame.field[i][0] === symbolO &&
+                        currentGame.field[i][1] === symbolO &&
+                        currentGame.field[i][2] === symbolO
                     ) {
-                        game.endGame = true;
-                        game.playerWin = 2;
+                        currentGame.endGame = true;
+                        currentGame.playerWin = 2;
                         return;
                     }
                 }
                 //проверка победителя по вертикали
                 for (let j = 0; j < 3; j++) {
                     if (
-                        field[0][j] === symbolX &&
-                        field[1][j] === symbolX &&
-                        field[2][j] === symbolX
+                        currentGame.field[0][j] === symbolX &&
+                        currentGame.field[1][j] === symbolX &&
+                        currentGame.field[2][j] === symbolX
                     ) {
-                        game.endGame = true;
-                        game.playerWin = 1;
+                        currentGame.endGame = true;
+                        currentGame.playerWin = 1;
                         return;
                     }
 
                     if (
-                        field[0][j] === symbolO &&
-                        field[1][j] === symbolO &&
-                        field[2][j] === symbolO
+                        currentGame.field[0][j] === symbolO &&
+                        currentGame.field[1][j] === symbolO &&
+                        currentGame.field[2][j] === symbolO
                     ) {
-                        game.endGame = true;
-                        game.playerWin = 2;
+                        currentGame.endGame = true;
+                        currentGame.playerWin = 2;
                         return;
                     }
                 }
                 //проверка победителя по диагоналям
                 if (
-                    (field[0][0] === symbolX &&
-                        field[1][1] === symbolX &&
-                        field[2][2] === symbolX) ||
-                    (field[0][2] === symbolX &&
-                        field[1][1] === symbolX &&
-                        field[2][0] === symbolX)
+                    (currentGame.field[0][0] === symbolX &&
+                        currentGame.field[1][1] === symbolX &&
+                        currentGame.field[2][2] === symbolX) ||
+                    (currentGame.field[0][2] === symbolX &&
+                        currentGame.field[1][1] === symbolX &&
+                        currentGame.field[2][0] === symbolX)
                 ) {
-                    game.endGame = true;
-                    game.playerWin = 1;
+                    currentGame.endGame = true;
+                    currentGame.playerWin = 1;
                     return;
                 }
 
                 if (
-                    (field[0][0] === symbolO &&
-                        field[1][1] === symbolO &&
-                        field[2][2] === symbolO) ||
-                    (field[0][2] === symbolO &&
-                        field[1][1] === symbolO &&
-                        field[2][0] === symbolO)
+                    (currentGame.field[0][0] === symbolO &&
+                        currentGame.field[1][1] === symbolO &&
+                        currentGame.field[2][2] === symbolO) ||
+                    (currentGame.field[0][2] === symbolO &&
+                        currentGame.field[1][1] === symbolO &&
+                        currentGame.field[2][0] === symbolO)
                 ) {
-                    game.endGame = true;
-                    game.playerWin = 2;
+                    currentGame.endGame = true;
+                    currentGame.playerWin = 2;
                     return;
                 }
 
                 //Проверка ничьи
                 for (let i = 0; i < 3; i++) {
                     for (let j = 0; j < 3; j++) {
-                        if (field[i][j] == undefined) {
-                            game.playerWin = 0;
+                        if (currentGame.field[i][j] == undefined) {
+                            currentGame.playerWin = 0;
                             return;
                         }
                     }
                 }
-                game.endGame = true;
-                game.playerWin = 3;
+                currentGame.endGame = true;
+                currentGame.playerWin = 3;
                 return;
             }
 
-            function clearField(field) {
+            function clearField(currentGame) {
                 for (let i = 0; i < 3; i++) {
                     for (let j = 0; j < 3; j++) {
-                        field[i][j] = undefined;
-                        var id = "t" + i + j;
+                        currentGame.field[i][j] = undefined;
+                        var id = currentGame.gameId + i + j;
+                        console.log(id);
                         var cell = document.getElementById(id);
                         cell.firstChild.nodeValue = "";
                     }
                 }
-                game.endGame = false;
+                currentGame.endGame = false;
                 winner.firstChild.nodeValue = " ";
-                game.playerWin = 0;
+                currentGame.playerWin = 0;
             }
 
-            function showSymbol(field, nextSymbolIsX) {
+            function showSymbol(currentGame) {
                 // получает элемент на который кликнули
+
                 var clickedElement = event.target;
 
                 // получает id элемента на который кликнули
@@ -182,15 +184,22 @@
                     10
                 );
                 //проверка ячейки, свободна ли она
-                if (field[indexOfElementHor][indexOfElementVer] === undefined) {
-                    if (nextSymbolIsX) {
-                        field[indexOfElementHor][indexOfElementVer] = symbolX;
+                if (
+                    currentGame.field[indexOfElementHor][indexOfElementVer] ===
+                    undefined
+                ) {
+                    if (currentGame.nextSymbolIsX) {
+                        currentGame.field[indexOfElementHor][
+                            indexOfElementVer
+                        ] = symbolX;
                         clickedElement.firstChild.nodeValue = symbolX;
-                        game.nextSymbolIsX = !game.nextSymbolIsX; //приходиться изменять
+                        currentGame.nextSymbolIsX = !currentGame.nextSymbolIsX; //приходиться изменять
                     } else {
-                        field[indexOfElementHor][indexOfElementVer] = symbolO;
+                        currentGame.field[indexOfElementHor][
+                            indexOfElementVer
+                        ] = symbolO;
                         clickedElement.firstChild.nodeValue = symbolO;
-                        game.nextSymbolIsX = !game.nextSymbolIsX; //приходиться изменять
+                        currentGame.nextSymbolIsX = !currentGame.nextSymbolIsX; //приходиться изменять
                     }
                 }
                 // выводит в консоль элемент и индекс
@@ -200,30 +209,30 @@
                     indexOfElementVer
                 );
                 // вывести в консоль состояние поля
-                console.log(field);
+                console.log(currentGame.field);
             }
 
-            function stepText(nextSymbolIsX) {
+            function stepText(currentGame) {
                 // чей ход?
-                game.nextSymbolIsX = nextSymbolIsX;
-                if (game.nextSymbolIsX) {
+                currentGame.nextSymbolIsX = nextSymbolIsX;
+                if (currentGame.nextSymbolIsX) {
                     step.firstChild.nodeValue = "Ход X";
                 } else {
                     step.firstChild.nodeValue = "Ход O";
                 }
             }
 
-            function winnerText(countX, countO) {
-                switch (game.playerWin) {
+            function winnerText(currentGame) {
+                switch (currentGame.playerWin) {
                     case 1:
                         winner.firstChild.nodeValue = "Победа за Х";
                         step.firstChild.nodeValue = "Клик для новой игры";
-                        game.countX++;
+                        currentGame.countX++;
                         break;
                     case 2:
                         winner.firstChild.nodeValue = "Победа за O";
                         step.firstChild.nodeValue = "Клик для новой игры";
-                        game.countO++;
+                        currentGame.countO++;
                         break;
                     case 3:
                         winner.firstChild.nodeValue = "Ничья";
@@ -233,26 +242,25 @@
             }
 
             function countText() {
-                cntX.firstChild.nodeValue = game.countX;
-                cntO.firstChild.nodeValue = game.countO;
+                cntX.firstChild.nodeValue = currentGame.countX;
+                cntO.firstChild.nodeValue = currentGame.countO;
             }
 
             function proccesClick() {
-                if (!game.endGame) {
-                    showSymbol(game.field, game.nextSymbolIsX);
-                    console.log(game);
-                    stepText(game.nextSymbolIsX);
-                    checkGame(game.field);
-                    winnerText(game.countX, game.countO);
+                if (!game.endGame || !currentGame.endGame) {
+                    showSymbol(game);
+                    stepText(game);
+                    checkGame(game);
+                    winnerText(game);
                     countText();
                 } else {
                     countText();
-                    stepText(game.nextSymbolIsX);
-                    clearField(game.field);
+                    stepText(game);
+                    clearField(game);
                 }
             }
 
-            var el = document.getElementById("field");
+            var el = document.getElementById("fieldT");
             el.addEventListener("click", proccesClick, false);
         </script>
     </body>
