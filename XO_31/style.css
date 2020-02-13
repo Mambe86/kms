@@ -1,0 +1,93 @@
+#game {
+    margin: 30px;
+    width: 150px;
+    height: 150px;
+    background: orange;
+    position: relative;
+}
+
+.cell {
+    width: 50px;
+    height: 50px;
+    float: left;
+    border: 1px solid white;
+    box-sizing: border-box;
+    line-height: 50px;
+    text-align: center;
+    font-size: 40px;
+    text-transform: uppercase;
+}
+
+.lineh1 {
+    width: 134px;
+    height: 4px;
+    background: red;
+    position: absolute;
+    left: 10px;
+    top: 24px;
+}
+
+.lineh2 {
+    width: 134px;
+    height: 4px;
+    background: red;
+    position: absolute;
+    left: 10px;
+    top: 74px;
+}
+
+.lineh3 {
+    width: 134px;
+    height: 4px;
+    background: red;
+    position: absolute;
+    left: 10px;
+    top: 124px;
+}
+
+.lined1 {
+    width: 200px;
+    height: 4px;
+    background: red;
+    position: absolute;
+    left: -24px;
+    top: 74px;
+    transform: rotate(45deg);
+}
+
+.lined2 {
+    width: 200px;
+    height: 4px;
+    background: red;
+    position: absolute;
+    left: -24px;
+    top: 74px;
+    transform: rotate(-45deg);
+}
+
+.linev1 {
+    width: 4px;
+    height: 134px;
+    background: red;
+    position: absolute;
+    left: 24px;
+    top: 10px;
+}
+
+.linev2 {
+    width: 4px;
+    height: 134px;
+    background: red;
+    position: absolute;
+    left: 74px;
+    top: 10px;
+}
+
+.linev3 {
+    width: 4px;
+    height: 134px;
+    background: red;
+    position: absolute;
+    left: 124px;
+    top: 10px;
+}
