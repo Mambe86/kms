@@ -18,7 +18,7 @@
         </style>
     </head>
     <body>
-        <table id="fieldT">
+        <table id="field">
             <tr>
                 <th id="t00"></th>
                 <th id="t01"></th>
@@ -67,7 +67,7 @@
                 //проверка
                 //проверка победителя по горизонтали
 
-                console.log(field);
+                console.log(currentGame.field);
                 for (let i = 0; i < 3; i++) {
                     if (
                         currentGame.field[i][0] === symbolX &&
@@ -167,54 +167,59 @@
                 currentGame.playerWin = 0;
             }
 
-            function showSymbol(currentGame) {
+            function showSymbol(currentGame, currentEvent) {
                 // получает элемент на который кликнули
 
-                var clickedElement = event.target;
-
+                
+                let gameOne=currentGame;
                 // получает id элемента на который кликнули
                 // затем берет второй символ от id, "t2" => "2"
                 // затем parseInt чтобы получить из сроки "2" интеджер 2
                 var indexOfElementHor = parseInt(
-                    clickedElement.id.substring(1, 2),
+                    currentEvent.id.substring(1, 2),
                     10
                 );
                 var indexOfElementVer = parseInt(
-                    clickedElement.id.substring(2, 3),
+                    currentEvent.id.substring(2, 3),
                     10
                 );
                 //проверка ячейки, свободна ли она
-                if (
-                    currentGame.field[indexOfElementHor][indexOfElementVer] ===
-                    undefined
+                console.log(
+                    gameOne.field[indexOfElementHor][indexOfElementVer]
+                );
+                if (true
+                   // MouseEvent.target. ===
+                    //undefined
                 ) {
-                    if (currentGame.nextSymbolIsX) {
-                        currentGame.field[indexOfElementHor][
+                    if (gameOne.nextSymbolIsX) {
+                        gameOne.field[indexOfElementHor][
                             indexOfElementVer
                         ] = symbolX;
-                        clickedElement.firstChild.nodeValue = symbolX;
-                        currentGame.nextSymbolIsX = !currentGame.nextSymbolIsX; //приходиться изменять
+                        console.log(currentEvent.firstChild);
+                        // clickedElement.innerHTML = ``;
+                        gameOne.nextSymbolIsX = !gameOne.nextSymbolIsX;
+                        currentEvent.innerHTML = symbolX;
                     } else {
-                        currentGame.field[indexOfElementHor][
+                        gameOne.field[indexOfElementHor][
                             indexOfElementVer
                         ] = symbolO;
-                        clickedElement.firstChild.nodeValue = symbolO;
-                        currentGame.nextSymbolIsX = !currentGame.nextSymbolIsX; //приходиться изменять
+                        currentEvent.innerHTML = symbolO;
+                        gameOne.nextSymbolIsX = !gameOne.nextSymbolIsX;
                     }
                 }
                 // выводит в консоль элемент и индекс
                 console.log(
-                    clickedElement,
+                    currentEvent,
                     indexOfElementHor,
                     indexOfElementVer
                 );
                 // вывести в консоль состояние поля
-                console.log(currentGame.field);
+                console.log(gameOne.field);
+                return gameOne;
             }
 
             function stepText(currentGame) {
                 // чей ход?
-                currentGame.nextSymbolIsX = nextSymbolIsX;
                 if (currentGame.nextSymbolIsX) {
                     step.firstChild.nodeValue = "Ход X";
                 } else {
@@ -241,27 +246,28 @@
                 }
             }
 
-            function countText() {
+            function countText(currentGame) {
                 cntX.firstChild.nodeValue = currentGame.countX;
                 cntO.firstChild.nodeValue = currentGame.countO;
             }
 
             function proccesClick() {
-                if (!game.endGame || !currentGame.endGame) {
-                    showSymbol(game);
-                    stepText(game);
-                    checkGame(game);
-                    winnerText(game);
-                    countText();
-                } else {
-                    countText();
-                    stepText(game);
-                    clearField(game);
-                }
+                var clickedElement = event.target;
+                console.log(clickedElement);
+                showSymbol(game, clickedElement);
+                console.log(showSymbol().gameId);
+                stepText(game);
+                checkGame(game);
+                winnerText(game);
+                countText();
+                countText();
+                stepText(game);
+                clearField(game);
             }
 
-            var el = document.getElementById("fieldT");
+            var el = document.getElementById("field");
             el.addEventListener("click", proccesClick, false);
+            
         </script>
     </body>
 </html>

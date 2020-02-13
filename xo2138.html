@@ -143,6 +143,7 @@ th, tr {
 		if (field[indexOfElementHor][indexOfElementVer]===undefined) {
 			if (nextSymbolIsX) {
 				field[indexOfElementHor][indexOfElementVer] = symbolX;
+				console.log(clickedElement.firstChild.nodeValue);
 				clickedElement.firstChild.nodeValue = symbolX;
 				nextSymbolIsX = !nextSymbolIsX;
 			}	else {
