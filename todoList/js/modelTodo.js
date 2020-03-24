@@ -1,69 +1,67 @@
-class Todo{
-    constructor(id,title,check){
+class Todo {
+    constructor(id, title, check) {
         this.id = id;
         this.title = title;
         this.check = check;
     }
-    
-
 }
 
 class StorageTodo {
-    getLastId () {
+    getLastId() {
         throw new Error("Нужно реализовать");
     }
-    generateNewId () {
+    generateNewId() {
         throw new Error("Нужно реализовать");
     }
-    getListTodo () {
+    getListTodo() {
         throw new Error("Нужно реализовать");
     }
-    getTodoById (id) {
+    getTodoById(id) {
         throw new Error("Нужно реализовать");
     }
     deleteTodoById(id) {
         throw new Error("Нужно реализовать");
     }
-    changeCheckTodoById (id, check){
+    changeCheckTodoById(id, check) {
         throw new Error("Нужно реализовать");
     }
-    saveTodo (todo) {
+    saveTodo(todo) {
         throw new Error("Нужно реализовать");
     }
 }
 class LocalStorageTodo extends StorageTodo {
-    getLastId () {
+    list = {};
+    getLastId() {
         let lastId = JSON.parse(localStorage.getItem("todoLastId"));
-        if (lastId == null) lastId=0;
-        return parseInt(lastId,10);
+        if (lastId == null) lastId = 0;
+        return parseInt(lastId, 10);
     }
-    generateNewId () {
-        let newId = this.getLastId() +1;
+    generateNewId() {
+        let newId = this.getLastId() + 1;
         localStorage.setItem("todoLastId", JSON.stringify(newId));
         return newId;
     }
-    getListTodo () {
-        let listTodo = JSON.parse(localStorage.getItem("listTodo"));
-        if (listTodo == null) listTodo = {};
-        return listTodo;
+    getListTodo() {
+        this.list = JSON.parse(localStorage.getItem("listTodo"));
+        if (this.list == null) this.list = {};
+        return this.list;
     }
-    getTodoById (id) {
-       return this.getListTodo()[id];
+    getTodoById(id) {
+        return this.getListTodo()[id];
+    }
+    saveList() {
+        localStorage.setItem("listTodo", JSON.stringify(this.list));
     }
     deleteTodoById(id) {
-        let listTodo = this.getListTodo();
-        listTodo.splice(id,1);
-        localStorage.setItem("listTodo", JSON.stringify(listTodo));
-
+        this.list.splice(id, 1);
+        this.saveList();
     }
-    changeCheckTodoById (id, check){
-        let listTodo = this.getListTodo();
-        listTodo[id].check = check;
-        localStorage.setItem("listTodo", JSON.stringify(listTodo));
+    changeCheckTodoById(id, check) {
+        this.list[id].check = check;
+        this.saveList();
     }
-    addTodo (todo) {
-        let listTodo = this.getListTodo();
-        listTodo[todo.id] = todo;
-        localStorage.setItem("listTodo", JSON.stringify(listTodo));
+    addTodo(todo) {
+        this.list[todo.id] = todo;
+        this.saveList();
     }
 }
