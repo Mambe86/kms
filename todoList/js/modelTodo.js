@@ -7,9 +7,6 @@ class Todo {
 }
 
 class StorageTodo {
-    getLastId() {
-        throw new Error("Нужно реализовать");
-    }
     generateNewId() {
         throw new Error("Нужно реализовать");
     }
@@ -30,21 +27,32 @@ class StorageTodo {
     }
 }
 class LocalStorageTodo extends StorageTodo {
-    list = {};
-    getLastId() {
-        let lastId = JSON.parse(localStorage.getItem("todoLastId"));
-        if (lastId == null) lastId = 0;
-        return parseInt(lastId, 10);
+    list = [];
+
+    [
+        {id: 4}, // 0
+        {id: 5}  // 1
+    ]
+
+    nextId;
+    constructor() {
+        super();
+        this.nextId = parseInt(
+            JSON.parse(localStorage.getItem("todoLastId") || "0"),
+            10
+        );
+        let rawData = JSON.parse(localStorage.getItem("listTodo") || "[]");
+        this.list = rawData.map(i => new Todo(i.id, i.title, i.check));
     }
-    generateNewId() {
-        let newId = this.getLastId() + 1;
-        localStorage.setItem("todoLastId", JSON.stringify(newId));
-        return newId;
-    }
+    // шас микрофон найду. погоди
     getListTodo() {
-        this.list = JSON.parse(localStorage.getItem("listTodo"));
-        if (this.list == null) this.list = {};
         return this.list;
+    }
+    
+    generateNewId() {
+        this.nextId++;
+        localStorage.setItem("todoLastId", JSON.stringify(this.nextId));
+        return this.nextId;
     }
     getTodoById(id) {
         return this.getListTodo()[id];
@@ -53,6 +61,9 @@ class LocalStorageTodo extends StorageTodo {
         localStorage.setItem("listTodo", JSON.stringify(this.list));
     }
     deleteTodoById(id) {
+      /*  [{id: 4}, {id:5}, {id: 6}].findIndex(t => {
+            return t.id === 6;
+            })*/
         this.list.splice(id, 1);
         this.saveList();
     }
@@ -61,7 +72,8 @@ class LocalStorageTodo extends StorageTodo {
         this.saveList();
     }
     addTodo(todo) {
-        this.list[todo.id] = todo;
+        this.list.push(todo);
+       // this.list[todo.id] = todo;
         this.saveList();
     }
 }
