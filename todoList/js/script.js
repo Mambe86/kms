@@ -6,7 +6,7 @@ function render(todoList) {
         if (todoList[key].check == true) {
             checked = "checked";
         }
-        out += `<input type="checkbox" id ="${todoList[key].id}" ${checked}> ,<button>`;
+        out += `<input type="checkbox" id ="${todoList[key].id}" ${checked}> `;
         out += todoList[key].title;
         out += `</label>`;
         out += `<br>`;
