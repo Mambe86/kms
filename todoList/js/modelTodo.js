@@ -66,7 +66,7 @@ class LocalStorageTodo extends StorageTodo {
     }
 
     getTodoById(id) {
-        this.list.find(t => {
+        return this.list.find(t => {
             return (t.id == id);
         });
     }
