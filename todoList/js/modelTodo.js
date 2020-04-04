@@ -6,12 +6,12 @@ class Todo {
     }
 }
 
-class StorageTodo {
+class TodoStorage {
     generateNewId() {
         throw new Error("Нужно реализовать");
     }
 
-    getListTodo() {
+    getList() {
         throw new Error("Нужно реализовать");
     }
 
@@ -32,16 +32,8 @@ class StorageTodo {
     }
 }
 
-class LocalStorageTodo extends StorageTodo {
+class LocalTodoStorage extends TodoStorage {
     list = [];
-
-    /*
-        [
-            {id: 4}, // 0
-            {id: 5}  // 1
-        ]
-    */
-
     nextId;
 
     constructor() {
@@ -51,11 +43,12 @@ class LocalStorageTodo extends StorageTodo {
             10
         );
         let rawData = JSON.parse(localStorage.getItem("listTodo") || "[]");
-        this.list = rawData.map(i => new Todo(i.id, i.title, i.check));
+        this.list = rawData.map(i => {
+            return new Todo(i.id, i.title, i.check);
+        });
     }
 
-    // шас микрофон найду. погоди
-    getListTodo() {
+    getList() {
         return this.list;
     }
 
@@ -67,7 +60,7 @@ class LocalStorageTodo extends StorageTodo {
 
     getTodoById(id) {
         return this.list.find(t => {
-            return (t.id == id);
+            return t.id === id;
         });
     }
 
@@ -76,19 +69,17 @@ class LocalStorageTodo extends StorageTodo {
     }
 
     deleteTodoById(id) {
-        /*  [{id: 4}, {id:5}, {id: 6}].findIndex(t => {
-              return t.id === 6;
-              })*/
         let index = this.list.findIndex(t => {
-            return (t.id == id);
+            return t.id === id;
         });
+
         this.list.splice(index, 1);
         this.saveList();
     }
 
     changeCheckTodoById(id, check) {
         let index = this.list.findIndex(t => {
-            return (t.id == id);
+            return t.id === id;
         });
         this.list[index].check = check;
         this.saveList();
@@ -96,7 +87,6 @@ class LocalStorageTodo extends StorageTodo {
 
     addTodo(todo) {
         this.list.push(todo);
-        // this.list[todo.id] = todo;
         this.saveList();
     }
 }

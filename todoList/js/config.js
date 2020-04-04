@@ -1,3 +1,3 @@
 function getStorageTodo() {
-    return new LocalStorageTodo();
+    return new LocalTodoStorage();
 }
