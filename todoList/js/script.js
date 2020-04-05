@@ -1,7 +1,7 @@
-import { LocalStorageTodo, Todo } from "./modelTodo";
+import { LocalTodoStorage, Todo } from "./modelTodo";
 
 (function () {
-    const storageTodo = new LocalStorageTodo();
+    const storageTodo = new LocalTodoStorage();
 
     function renderTodo(todo) {
         let labelEl, liClass, checkTag;
