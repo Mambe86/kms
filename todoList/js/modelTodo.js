@@ -1,4 +1,4 @@
-class Todo {
+export class Todo {
     constructor(id, title, check) {
         this.id = id;
         this.title = title;
@@ -6,7 +6,7 @@ class Todo {
     }
 }
 
-class TodoStorage {
+export class TodoStorage {
     generateNewId() {
         throw new Error("Нужно реализовать");
     }
@@ -32,7 +32,7 @@ class TodoStorage {
     }
 }
 
-class LocalTodoStorage extends TodoStorage {
+export class LocalTodoStorage extends TodoStorage {
     list = [];
     nextId;
 
@@ -43,7 +43,7 @@ class LocalTodoStorage extends TodoStorage {
             10
         );
         let rawData = JSON.parse(localStorage.getItem("listTodo") || "[]");
-        this.list = rawData.map(i => {
+        this.list = rawData.map((i) => {
             return new Todo(i.id, i.title, i.check);
         });
     }
@@ -59,7 +59,7 @@ class LocalTodoStorage extends TodoStorage {
     }
 
     getTodoById(id) {
-        return this.list.find(t => {
+        return this.list.find((t) => {
             return t.id === id;
         });
     }
@@ -69,7 +69,7 @@ class LocalTodoStorage extends TodoStorage {
     }
 
     deleteTodoById(id) {
-        let index = this.list.findIndex(t => {
+        let index = this.list.findIndex((t) => {
             return t.id === id;
         });
 
@@ -78,7 +78,7 @@ class LocalTodoStorage extends TodoStorage {
     }
 
     changeCheckTodoById(id, check) {
-        let index = this.list.findIndex(t => {
+        let index = this.list.findIndex((t) => {
             return t.id === id;
         });
         this.list[index].check = check;
