@@ -4,12 +4,14 @@
   "description": "",
   "scripts": {
     "build": "webpack",
-    "watch": "webpack --watch"
+    "watch": "webpack --watch",
+    "serve": "node server/index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "express": "^4.17.1",
     "webpack-cli": "^3.3.11"
   },
   "devDependencies": {
