@@ -2,7 +2,7 @@ export class Todo {
     constructor(id, title, check) {
         this.id = id;
         this.title = title;
-        this.check = check;
+        this.isDone = check;
     }
 }
 
@@ -44,7 +44,7 @@ export class LocalTodoStorage extends TodoStorage {
         );
         let rawData = JSON.parse(localStorage.getItem("listTodo") || "[]");
         this.list = rawData.map((i) => {
-            return new Todo(i.id, i.title, i.check);
+            return new Todo(i.id, i.title, i.isDone);
         });
     }
 
@@ -81,7 +81,7 @@ export class LocalTodoStorage extends TodoStorage {
         let index = this.list.findIndex((t) => {
             return t.id === id;
         });
-        this.list[index].check = check;
+        this.list[index].isDone = check;
         this.saveList();
     }
 

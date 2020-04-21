@@ -6,7 +6,7 @@ import { LocalTodoStorage, Todo } from "./modelTodo";
     function renderTodo(todo) {
         let labelEl, liClass, checkTag;
 
-        if (todo.check == true) {
+        if (todo.isDone == true) {
             liClass = 'class = "checked"';
             checkTag = "checked";
         } else {
@@ -64,5 +64,25 @@ import { LocalTodoStorage, Todo } from "./modelTodo";
             if (clickAction === "check") onclickTodoCheck(todoId);
             if (clickAction === "delete") onclickTodoDelete(todoId);
         };
+        document.getElementById("get").onclick = function () {
+            let xhr = new XMLHttpRequest();
+            xhr.open("GET", "http://localhost:3000/todos")
+            xhr.send();
+            xhr.onload = function() {
+                let responseObj = JSON.parse(xhr.response || "[]");
+            console.log(typeof(responseObj)); // Привет, мир!
+            console.log(responseObj);
+            console.log(responseObj[0].title);
+              };
+
+        };
+        document.getElementById("post").onclick = function () {
+            let title = document.getElementById("in").value;
+            let todo = new Todo(storageTodo.generateNewId(), title, false);
+            console.log(todo);
+            xhr.open("POST", "http://localhost:3000/todos/add");// 333
+            xhr.send(JSON.stringify({id: 2, title: "2 Todo", isDone: false}));
+        };
+
     };
 })();
