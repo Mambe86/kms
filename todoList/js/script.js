@@ -2,6 +2,7 @@ import { LocalTodoStorage, Todo } from "./modelTodo";
 
 (function () {
     const storageTodo = new LocalTodoStorage();
+    let receivedList ;
 
     function renderTodo(todo) {
         let labelEl, liClass, checkTag;
@@ -49,13 +50,16 @@ import { LocalTodoStorage, Todo } from "./modelTodo";
     }
 
     window.onload = function () {
-        renderList(storageTodo.getList());
+       getList();
+       console.log(receivedList);
+        renderList(receivedList || storageTodo.getList());
 
         document.getElementById("add").onclick = function () {
             let title = document.getElementById("in").value;
             let todo = new Todo(storageTodo.generateNewId(), title, false);
             storageTodo.addTodo(todo);
-            renderList(storageTodo.getList());
+            console.log(receivedList);
+            renderList(receivedList || storageTodo.getList());
         };
         document.getElementById("out").onclick = function (e) {
             console.log(e);
@@ -64,25 +68,219 @@ import { LocalTodoStorage, Todo } from "./modelTodo";
             if (clickAction === "check") onclickTodoCheck(todoId);
             if (clickAction === "delete") onclickTodoDelete(todoId);
         };
-        document.getElementById("get").onclick = function () {
-            let xhr = new XMLHttpRequest();
-            xhr.open("GET", "http://localhost:3000/todos")
-            xhr.send();
-            xhr.onload = function() {
+
+        function loadTodos(onLoadDone, onError) {
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", "http://localhost:3000/todos");
+
+            xhr.onload = function () {
+                //  получили ответ от бекенда, парсим
                 let responseObj = JSON.parse(xhr.response || "[]");
-            console.log(typeof(responseObj)); // Привет, мир!
-            console.log(responseObj);
-            console.log(responseObj[0].title);
-              };
+
+                // и возвращаем вызовом колбека
+                onLoadDone(responseObj);
+                receivedList = responseObj;
+                console.log(`полученный список ${receivedList}`)
+            };
+
+            xhr.onerror = function () {
+                // что-то пошло не так, вызываем колбек ошибки
+                onError();
+            };
+
+            xhr.send();
+        }
+        function getList() {
+            loadTodos(
+                function (todos) {
+                    console.log("Получили список туду от бекенда :)");
+                    console.log(todos);
+                    
+                },
+                function () {
+                    console.log("Что-то пошло не так при запросе к бекенду :(");
+                }
+            );
+
+            console.log(
+                "Запустили, и передали колбеки, ждем когда одна из них будет вызвана."
+            );
+        }
+
+        document.getElementById("get").onclick = function () {
+            console.log("Запускаем получаение списка с бекенда...");
+            loadTodos(
+                function (todos) {
+                    console.log("Получили список туду от бекенда :)");
+                    console.log(todos);
+                    
+                },
+                function () {
+                    console.log("Что-то пошло не так при запросе к бекенду :(");
+                }
+            );
+
+            console.log(
+                "Запустили, и передали колбеки, ждем когда одна из них будет вызвана."
+            );
+           
 
         };
-        document.getElementById("post").onclick = function () {
+
+        function loadTodoByID(id, onLoadDone, onError) {
+            const xhr = new XMLHttpRequest();
+
+            xhr.open("GET", `http://localhost:3000/todos/${id}`);
+
+            xhr.onload = function () {
+                //  получили ответ от бекенда, парсим
+                let responseObj = JSON.parse(xhr.response || "[]");
+
+                // и возвращаем вызовом колбека
+                onLoadDone(responseObj);
+            };
+
+            xhr.onerror = function () {
+                // что-то пошло не так, вызываем колбек ошибки
+                onError();
+            };
+
+            xhr.send();
+        }
+
+        document.getElementById("byId").onclick = function () {
+            let id = +document.getElementById("numId").value;
+            console.log("Запускаем получаение todo по id с бекенда...");
+            loadTodoByID(
+                id,
+                function (todo) {
+                    console.log("Получили туду по id от бекенда :)");
+                    console.log(todo);
+                },
+                function () {
+                    console.log("Что-то пошло не так при запросе к бекенду :(");
+                }
+            );
+
+            console.log(
+                "Запустили, и передали колбеки, ждем когда одна из них будет вызвана."
+            );
+        };
+
+        function refreshTodoByID(id, json, onLoadDone, onError) {
+            const xhr = new XMLHttpRequest();
+
+            xhr.open("PUT", `http://localhost:3000/todos/${id}`);
+            xhr.setRequestHeader(
+                "Content-type",
+                "application/json; charset=utf-8"
+            );
+
+            xhr.onload = function () {
+                //  получили ответ от бекенда, парсим
+                let responseObj = JSON.parse(xhr.response || "[]");
+
+                // и возвращаем вызовом колбека
+                onLoadDone(responseObj);
+            };
+
+            xhr.onerror = function () {
+                // что-то пошло не так, вызываем колбек ошибки
+                onError();
+            };
+
+            xhr.send(json);
+        }
+
+        document.getElementById("refresh").onclick = function () {
+            let id = +document.getElementById("numId").value;
             let title = document.getElementById("in").value;
-            let todo = new Todo(storageTodo.generateNewId(), title, false);
-            console.log(todo);
-            xhr.open("POST", "http://localhost:3000/todos/add");// 333
-            xhr.send(JSON.stringify({id: 2, title: "2 Todo", isDone: false}));
+            let json = JSON.stringify({
+                title: title,
+                isDone: false,
+            });
+            console.log("Запускаем обновление todo по id на бекенде...");
+            refreshTodoByID(
+                id,
+                json,
+                function (todo) {
+                    console.log("Получили туду по id от бекенда :)");
+                    console.log(todo);
+                },
+                function () {
+                    console.log("Что-то пошло не так при запросе к бекенду :(");
+                }
+            );
+
+            console.log(
+                "Запустили, и передали колбеки, ждем когда одна из них будет вызвана."
+            );
         };
 
+        function deleteTodoByID(id, onLoadDone, onError) {
+            const xhr = new XMLHttpRequest();
+
+            xhr.open("DELETE", `http://localhost:3000/todos/${id}`);
+            xhr.setRequestHeader(
+                "Content-type",
+                "application/json; charset=utf-8"
+            );
+
+            xhr.onload = function () {
+                //  получили ответ от бекенда, парсим
+                let responseObj = JSON.parse(xhr.response || "[]"); // ?
+
+                // и возвращаем вызовом колбека
+                onLoadDone(responseObj);
+            };
+
+            xhr.onerror = function () {
+                // что-то пошло не так, вызываем колбек ошибки
+                onError();
+            };
+
+            xhr.send();
+        }
+
+        document.getElementById("delete").onclick = function () {
+            let id = +document.getElementById("numId").value;
+            console.log("Запускаем удаление todo по id на бекенде...");
+            deleteTodoByID(
+                id,
+                function (rspns) {
+                    console.log(`Удаление туду по id на бекенде :) - ${rspns}`);
+                    console.log(rspns);
+                },
+                function () {
+                    console.log("Что-то пошло не так при запросе к бекенду :(");
+                }
+            );
+
+            console.log(
+                "Запустили, и передали колбеки, ждем когда одна из них будет вызвана."
+            );
+        };
+
+        document.getElementById("post").onclick = function () {
+            let xhr = new XMLHttpRequest();
+            let title = document.getElementById("in").value;
+            let json = JSON.stringify({
+                title: title,
+                isDone: false,
+            });
+
+            console.log(json);
+            xhr.open("POST", "http://localhost:3000/todos/add");
+            xhr.setRequestHeader(
+                "Content-type",
+                "application/json; charset=utf-8"
+            );
+            //xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+            xhr.send(json);
+
+            xhr.onerror = function () {
+                console.log("error");
+            };
+        };
     };
 })();
