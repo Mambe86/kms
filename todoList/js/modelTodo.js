@@ -89,4 +89,122 @@ export class LocalTodoStorage extends TodoStorage {
         this.list.push(todo);
         this.saveList();
     }
+} //=================================================================
+
+export class RemoteTodoStorage {
+    receivedList = [];
+    nextId;
+    getRemoteList() {
+        //получение листа
+        console.log("getRemoteList() запушен...");
+        const xhr = new XMLHttpRequest();
+        let responseObj;
+        xhr.open("GET", "http://localhost:3000/todos");
+
+        xhr.onload = function () {
+            //  получили ответ от бекенда, парсим
+            responseObj = JSON.parse(xhr.response || "[]");
+
+            // и возвращаем вызовом колбека
+
+            console.log("Получили список туду от бекенда :)");
+            console.log(responseObj);
+            this.receivedList = responseObj;
+        };
+
+        xhr.onerror = function () {
+            console.log("Что-то пошло не так при запросе к бекенду :(");
+        };
+
+        xhr.send();
+        this.receivedList = responseObj;
+    }
+
+    loadTodoByID(id, onLoadDone, onError) {
+        //получение туду по id
+        const xhr = new XMLHttpRequest();
+
+        xhr.open("GET", `http://localhost:3000/todos/${id}`);
+
+        xhr.onload = function () {
+            //  получили ответ от бекенда, парсим
+            let responseObj = JSON.parse(xhr.response || "[]");
+
+            // и возвращаем вызовом колбека
+            onLoadDone(responseObj);
+        };
+
+        xhr.onerror = function () {
+            // что-то пошло не так, вызываем колбек ошибки
+            onError();
+        };
+
+        xhr.send();
+    }
+
+    refreshTodoByID(id, json, onLoadDone, onError) {
+        //обновление тудушки по id
+        const xhr = new XMLHttpRequest();
+
+        xhr.open("PUT", `http://localhost:3000/todos/${id}`);
+        xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
+
+        xhr.onload = function () {
+            //  получили ответ от бекенда, парсим
+            let responseObj = JSON.parse(xhr.response || "[]");
+
+            // и возвращаем вызовом колбека
+            onLoadDone(responseObj);
+        };
+
+        xhr.onerror = function () {
+            // что-то пошло не так, вызываем колбек ошибки
+            onError();
+        };
+
+        xhr.send(json);
+    }
+
+    deleteTodoByID(id, onLoadDone, onError) {
+        //удаление туду по id
+        const xhr = new XMLHttpRequest();
+
+        xhr.open("DELETE", `http://localhost:3000/todos/${id}`);
+        xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
+
+        xhr.onload = function () {
+            //  получили ответ от бекенда, парсим
+            let responseObj = JSON.parse(xhr.response || "[]"); // ?
+            // и возвращаем вызовом колбека
+            onLoadDone(responseObj);
+        };
+
+        xhr.onerror = function () {
+            // что-то пошло не так, вызываем колбек ошибки
+            onError();
+        };
+
+        xhr.send();
+    }
+    addNewTodo(json, onLoadDone, onError) {
+        //добавление туду в лист
+        let xhr = new XMLHttpRequest();
+        let title = document.getElementById("in").value;
+
+        console.log(json);
+        xhr.open("POST", "http://localhost:3000/todos/add");
+        xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
+        xhr.onload = function () {
+            //  получили ответ от бекенда, парсим
+            let responseObj = JSON.parse(xhr.response || "[]");
+            // и возвращаем вызовом колбека
+            onLoadDone(responseObj);
+        };
+
+        xhr.onerror = function () {
+            onError();
+        };
+
+        xhr.send(json);
+    }
 }

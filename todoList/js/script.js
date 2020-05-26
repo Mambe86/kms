@@ -1,8 +1,8 @@
-import { LocalTodoStorage, Todo } from "./modelTodo";
+import { LocalTodoStorage, Todo, RemoteTodoStorage } from "./modelTodo";
 
 (function () {
     const storageTodo = new LocalTodoStorage();
-    let receivedList ;
+    const remoteTodo = new RemoteTodoStorage();
 
     function renderTodo(todo) {
         let labelEl, liClass, checkTag;
@@ -50,16 +50,16 @@ import { LocalTodoStorage, Todo } from "./modelTodo";
     }
 
     window.onload = function () {
-       getList();
-       console.log(receivedList);
-        renderList(receivedList || storageTodo.getList());
+       // remoteTodo.getRemoteList();
+       console.log(remoteTodo.receivedList);
+        renderList(remoteTodo.receivedList || storageTodo.getList());
 
         document.getElementById("add").onclick = function () {
             let title = document.getElementById("in").value;
             let todo = new Todo(storageTodo.generateNewId(), title, false);
             storageTodo.addTodo(todo);
             console.log(receivedList);
-            renderList(receivedList || storageTodo.getList());
+            renderList(remoteTodo.receivedList || storageTodo.getList());
         };
         document.getElementById("out").onclick = function (e) {
             console.log(e);
