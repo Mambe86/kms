@@ -4,7 +4,20 @@ import { LocalTodoStorage, Todo, RemoteTodoStorage } from "./modelTodo";
     const storageTodo = new LocalTodoStorage();
     const remoteTodo = new RemoteTodoStorage();
 
+    document.onload = function() {
+        // один раз в самом начале привязываемся к обновлению списка
+        // функция будет вызвана всякий раз когда список или элемент в нем обновлен
+        // 
+        storage.onListUpdate = function(list) { 
+            renderList(list); // отрисовать list на странице
+        };
+    
+        // в самом начале вызываем получение списка с сервера
+        storageTodo.fetchFromServer();
+    }
+
     function renderTodo(todo) {
+        console.log(`renderTodo получил ${todo}`);
         let labelEl, liClass, checkTag;
 
         if (todo.isDone == true) {
@@ -25,6 +38,7 @@ import { LocalTodoStorage, Todo, RemoteTodoStorage } from "./modelTodo";
     }
 
     function renderList(todoList) {
+        console.log(`renderList получил ${todoList}`);
         const outElement = document.getElementById("out");
         outElement.innerHTML = "";
         let renderResult = "";
@@ -50,7 +64,7 @@ import { LocalTodoStorage, Todo, RemoteTodoStorage } from "./modelTodo";
     }
 
     window.onload = function () {
-       // remoteTodo.getRemoteList();
+       remoteTodo.getRemoteList();
        console.log(remoteTodo.receivedList);
         renderList(remoteTodo.receivedList || storageTodo.getList());
 
@@ -61,6 +75,13 @@ import { LocalTodoStorage, Todo, RemoteTodoStorage } from "./modelTodo";
             console.log(receivedList);
             renderList(remoteTodo.receivedList || storageTodo.getList());
         };
+
+        document.getElementById("renderList").onclick = function () {
+            renderList(remoteTodo.receivedList || storageTodo.getList());
+        }
+        document.getElementById("remoteTodo").onclick = function () {
+            console.log(remoteTodo);
+        }
         document.getElementById("out").onclick = function (e) {
             console.log(e);
             let todoId = +e.target.dataset.todoId;
@@ -69,27 +90,7 @@ import { LocalTodoStorage, Todo, RemoteTodoStorage } from "./modelTodo";
             if (clickAction === "delete") onclickTodoDelete(todoId);
         };
 
-        function loadTodos(onLoadDone, onError) {
-            const xhr = new XMLHttpRequest();
-            xhr.open("GET", "http://localhost:3000/todos");
-
-            xhr.onload = function () {
-                //  получили ответ от бекенда, парсим
-                let responseObj = JSON.parse(xhr.response || "[]");
-
-                // и возвращаем вызовом колбека
-                onLoadDone(responseObj);
-                receivedList = responseObj;
-                console.log(`полученный список ${receivedList}`)
-            };
-
-            xhr.onerror = function () {
-                // что-то пошло не так, вызываем колбек ошибки
-                onError();
-            };
-
-            xhr.send();
-        }
+        
         function getList() {
             loadTodos(
                 function (todos) {
@@ -108,7 +109,8 @@ import { LocalTodoStorage, Todo, RemoteTodoStorage } from "./modelTodo";
         }
 
         document.getElementById("get").onclick = function () {
-            console.log("Запускаем получаение списка с бекенда...");
+            
+           console.log("Запускаем получаение списка с бекенда...");
             loadTodos(
                 function (todos) {
                     console.log("Получили список туду от бекенда :)");
@@ -124,6 +126,28 @@ import { LocalTodoStorage, Todo, RemoteTodoStorage } from "./modelTodo";
                 "Запустили, и передали колбеки, ждем когда одна из них будет вызвана."
             );
            
+
+        };
+
+        document.getElementById("getRemList").onclick = function () {
+            console.log('запуск getRemList ');
+            remoteTodo.getRemoteList();
+         /*   console.log("Запускаем получаение списка с бекенда...");
+            loadTodos(
+                function (todos) {
+                    console.log("Получили список туду от бекенда :)");
+                    console.log(todos);
+                    
+                },
+                function () {
+                    console.log("Что-то пошло не так при запросе к бекенду :(");
+                }
+            );
+
+            console.log(
+                "Запустили, и передали колбеки, ждем когда одна из них будет вызвана."
+            );
+           */
 
         };
 

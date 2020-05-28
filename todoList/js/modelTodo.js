@@ -91,33 +91,59 @@ export class LocalTodoStorage extends TodoStorage {
     }
 } //=================================================================
 
+function loadTodos(onLoadDone, onError) {
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", "http://localhost:3000/todos");
+
+    xhr.onload = function () {
+        //  получили ответ от бекенда, парсим
+        let responseObj = JSON.parse(xhr.response || "[]");
+
+        // и возвращаем вызовом колбека
+        onLoadDone(responseObj);
+        console.log(`полученный список`);
+        console.log(responseObj);
+    };
+
+    xhr.onerror = function () {
+        // что-то пошло не так, вызываем колбек ошибки
+        onError();
+    };
+
+    xhr.send();
+}
+
 export class RemoteTodoStorage {
     receivedList = [];
     nextId;
+    constructor() {
+        /*this.nextId = parseInt(
+            JSON.parse(localStorage.getItem("todoLastId") || "0"),
+            10
+        );
+        let rawData = JSON.parse(localStorage.getItem("listTodo") || "[]");
+        this.list = rawData.map((i) => {
+            return new Todo(i.id, i.title, i.isDone);
+        });*/
+    }
+
     getRemoteList() {
         //получение листа
-        console.log("getRemoteList() запушен...");
-        const xhr = new XMLHttpRequest();
-        let responseObj;
-        xhr.open("GET", "http://localhost:3000/todos");
-
-        xhr.onload = function () {
-            //  получили ответ от бекенда, парсим
-            responseObj = JSON.parse(xhr.response || "[]");
-
-            // и возвращаем вызовом колбека
-
-            console.log("Получили список туду от бекенда :)");
-            console.log(responseObj);
-            this.receivedList = responseObj;
-        };
-
-        xhr.onerror = function () {
-            console.log("Что-то пошло не так при запросе к бекенду :(");
-        };
-
-        xhr.send();
-        this.receivedList = responseObj;
+        loadTodos(
+            (todosFromServer) => {
+               // this.receivedList = JSON.parse(todosFromServer || "[]");
+                this.receivedList =todosFromServer
+                // даем знать тем, кто зарегистрировался на обновления что у нас новый список
+                // то же самое должно быть и при удалении и обновлении элементов из списка.
+                if (this.onListUpdate !== undefined) {
+                    this.onListUpdate(this.receivedList);
+                }
+            },
+            () => {
+                // error
+                console.log("эрар")
+            }
+        );
     }
 
     loadTodoByID(id, onLoadDone, onError) {
