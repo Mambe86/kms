@@ -1,3 +1,5 @@
+import { sendRequest } from "./helpers";
+
 export class Todo {
     constructor(id, title, check) {
         this.id = id;
@@ -92,25 +94,21 @@ export class LocalTodoStorage extends TodoStorage {
 } //=================================================================
 
 function loadTodos(onLoadDone, onError) {
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", "http://localhost:3000/todos");
-
-    xhr.onload = function () {
-        //  получили ответ от бекенда, парсим
-        let responseObj = JSON.parse(xhr.response || "[]");
-
-        // и возвращаем вызовом колбека
-        onLoadDone(responseObj);
-        console.log(`полученный список`);
-        console.log(responseObj);
-    };
-
-    xhr.onerror = function () {
-        // что-то пошло не так, вызываем колбек ошибки
-        onError();
-    };
-
-    xhr.send();
+    sendRequest(
+        "GET",
+        "/todos",
+        (response) => {
+            if (response.status === "OK") {
+                onLoadDone(response.data);
+            } else {
+                onError();
+            }
+        },
+        () => {
+        // уведомить пользователя что что-то пошло не так
+            onError();
+        }
+    );
 }
 
 export class RemoteTodoStorage {
@@ -131,8 +129,9 @@ export class RemoteTodoStorage {
         //получение листа
         loadTodos(
             (todosFromServer) => {
-               // this.receivedList = JSON.parse(todosFromServer || "[]");
-                this.receivedList =todosFromServer
+
+                // HERE: преобразовать в оъекты типа Todo
+                this.receivedList =todosFromServer;
                 // даем знать тем, кто зарегистрировался на обновления что у нас новый список
                 // то же самое должно быть и при удалении и обновлении элементов из списка.
                 if (this.onListUpdate !== undefined) {
@@ -146,7 +145,7 @@ export class RemoteTodoStorage {
         );
     }
 
-    loadTodoByID(id, onLoadDone, onError) {
+    loadTodoByID(id, onLoadDone, onError) { // HERE: использовать функцию sendRequest для общения с бекендом
         //получение туду по id
         const xhr = new XMLHttpRequest();
 
@@ -168,7 +167,7 @@ export class RemoteTodoStorage {
         xhr.send();
     }
 
-    refreshTodoByID(id, json, onLoadDone, onError) {
+    refreshTodoByID(id, json, onLoadDone, onError) {  // HERE: использовать функцию sendRequest для общения с бекендом
         //обновление тудушки по id
         const xhr = new XMLHttpRequest();
 
@@ -191,14 +190,19 @@ export class RemoteTodoStorage {
         xhr.send(json);
     }
 
-    deleteTodoByID(id, onLoadDone, onError) {
+    deleteTodoByID(id, onLoadDone, onError) { // HERE: использовать функцию sendRequest для общения с бекендом
         //удаление туду по id
         const xhr = new XMLHttpRequest();
 
         xhr.open("DELETE", `http://localhost:3000/todos/${id}`);
         xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
 
-        xhr.onload = function () {
+        xhr.onload = function (result) {
+            // HERE: Получаем подтверждение того что туду удален 'if (response.status === "OK")', после этого нужно
+            // HERE: нужно удалить туду с айди равным 'id' из this.receivedList
+            // HERE: а затем вызвать this.onListUpdate(this.receivedList).
+
+
             //  получили ответ от бекенда, парсим
             let responseObj = JSON.parse(xhr.response || "[]"); // ?
             // и возвращаем вызовом колбека
@@ -212,10 +216,10 @@ export class RemoteTodoStorage {
 
         xhr.send();
     }
-    addNewTodo(json, onLoadDone, onError) {
+    addNewTodo(json, onLoadDone, onError) { // HERE: использовать функцию sendRequest для общения с бекендом
         //добавление туду в лист
         let xhr = new XMLHttpRequest();
-        let title = document.getElementById("in").value;
+        let title = document.getElementById("in").value; // HERE: переменная не используется, рабтать с DOM внутри этой функции нельзя
 
         console.log(json);
         xhr.open("POST", "http://localhost:3000/todos/add");
